@@ -46,7 +46,7 @@ jobs:
           cargo clippy --locked --all-targets -- -D warnings
           cargo test --locked
 
-  # The image, pushed to GHCR on main. The box pulls ghcr.io/<owner>/realm-icons.
+  # The image, pushed to GHCR on main. The box pulls ghcr.io/yourrealm/icons:latest.
   image:
     needs: check
     if: github.event_name != 'pull_request'
