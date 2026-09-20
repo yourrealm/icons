@@ -1,0 +1,225 @@
+:root {
+  --tile: #b4a3f2;
+  --ink: #2c2450;
+  --bg: #f7f5ff;
+  --panel: #ffffff;
+  --line: #ddd6f7;
+  --muted: #6b6389;
+  color-scheme: light dark;
+  accent-color: var(--tile);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #ece7ff;
+    --bg: #17132a;
+    --panel: #221c3d;
+    --line: #3a3160;
+    --muted: #a99fcf;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+header img {
+  grid-row: span 2;
+}
+header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+header p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+button,
+.button {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+button.on,
+.tabs button.on {
+  background: var(--tile);
+  border-color: var(--tile);
+  color: #1a1030;
+}
+input[type="text"],
+input:not([type]),
+.search {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.search {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.chars label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.chars label input {
+  width: 96px;
+  font-size: 32px;
+  text-align: center;
+}
+.quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.quick button {
+  width: 40px;
+  padding: 6px 0;
+  font-size: 18px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
+}
+.grid button {
+  padding: 4px;
+  border-radius: 12px;
+  aspect-ratio: 1;
+}
+.grid img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.hint,
+.error {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.error {
+  color: #c0392b;
+}
+.previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.previews figure {
+  margin: 0;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+}
+.previews .light {
+  background: #f7f5ff;
+  color: #6b6389;
+}
+.previews .dark {
+  background: #17132a;
+  color: #a99fcf;
+}
+.previews img {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+}
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.controls output {
+  float: right;
+  font-variant-numeric: tabular-nums;
+}
+.files {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.files th,
+.files td {
+  text-align: left;
+  padding: 8px 6px;
+  border-top: 1px solid var(--line);
+  vertical-align: middle;
+}
+.files th {
+  white-space: nowrap;
+  font-weight: 600;
+}
+.files code {
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--muted);
+}
+.files .actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.files .actions > * {
+  margin-left: 6px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .previews,
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  .files code {
+    display: none;
+  }
+}

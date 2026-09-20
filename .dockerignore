@@ -1,0 +1,7 @@
+# Only the container's inputs.
+*
+!server/
+!web/
+server/target/
+web/node_modules/
+web/dist/

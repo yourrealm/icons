@@ -1,0 +1,6 @@
+{
+  "fmt": {
+    "lineWidth": 100,
+    "exclude": ["server/", "web/node_modules/", "web/dist/", "web/pnpm-lock.yaml"]
+  }
+}

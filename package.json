@@ -1,0 +1,19 @@
+{
+  "name": "realm-icons",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "typecheck": "pnpm -C web typecheck && pnpm -C web build && cargo clippy --manifest-path server/Cargo.toml --locked --all-targets -- -D warnings",
+    "test": "pnpm -C web build && cargo test --manifest-path server/Cargo.toml --locked",
+    "fmt": "deno fmt && cargo fmt --manifest-path server/Cargo.toml",
+    "fmt:check": "deno fmt --check && cargo fmt --manifest-path server/Cargo.toml --check",
+    "dev:server": "pnpm -C web build && PORT=${ICONS_PORT:-3000} cargo run --manifest-path server/Cargo.toml",
+    "dev:web": "pnpm -C web dev",
+    "build:web": "pnpm -C web build",
+    "build:image": "docker build -t realm-icons:latest .",
+    "vendor": "scripts/vendor.sh"
+  }
+}
