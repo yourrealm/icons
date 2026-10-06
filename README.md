@@ -14,7 +14,7 @@ GET /fa/piggy-bank.ico               16, 32 and 48 px frames, tile crop, no grai
 
 ?theme=light|dark|auto      default light; auto is both marks in one SVG, picked by prefers-color-scheme
 ?crop=full|tile             default full (the 400-unit mark with its shadow); tile fills the frame, for icons
-?grain=0..1                 default 1, the heavy grain; PNGs at or below 64 px and ICO drop it
+?grain=0..1                 default 0, none; see Grain below. PNGs at or below 64 px and ICO drop it
 ?label=text                 the SVG's title and aria-label, default the glyph's name
 
 GET /api/sets               the icon names in each set, for the UI
@@ -24,6 +24,22 @@ GET /healthz
 Responses carry `Cache-Control: public, max-age=604800`, an ETag and
 `Access-Control-Allow-Origin: *`, so hotlinking from a `realm.tsx` is fine. Errors are
 `{ "error": "..." }` with 400 or 404.
+
+## Grain
+
+`grain` overlays fractal noise on the clay, for a mark shown large: a hero, a splash, a store
+listing. It is off by default because the noise is drawn in the mark's own units, so it shrinks with
+the image. Below about 200 px on screen it gets finer than a pixel and reads as speckle, not clay.
+Leave it off for favicons and launcher icons.
+
+| `grain=0` (default)                                                           | `grain=0.4`                                                                             | `grain=1`                                                                             |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| <img src="https://icons.yourrealm.eu/shape/divide.svg?crop=tile" width="200"> | <img src="https://icons.yourrealm.eu/shape/divide.svg?crop=tile&grain=0.4" width="200"> | <img src="https://icons.yourrealm.eu/shape/divide.svg?crop=tile&grain=1" width="200"> |
+
+```
+https://icons.yourrealm.eu/shape/divide.svg?crop=tile&grain=0.4
+https://icons.yourrealm.eu/fa/piggy-bank.png?size=1024&grain=1
+```
 
 The web UI at `/` picks a source and a glyph, previews both themes, and gives the five files an app
 ships (`logo.svg`, `logo-dark.svg`, `favicon.svg`, `favicon.ico`, `icon-512.png`) as downloads and

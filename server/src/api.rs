@@ -113,7 +113,7 @@ fn parse(q: &Params, stem: &str, format: Format) -> Result<Request, String> {
         },
     };
     let mut grain = match &q.grain {
-        None => 1.0,
+        None => 0.0,
         Some(s) => match s.parse::<f64>() {
             Ok(g) if (0.0..=1.0).contains(&g) => g,
             _ => return Err("grain is 0 to 1".into()),
@@ -250,13 +250,13 @@ mod tests {
         assert!(headers.contains_key(header::ETAG));
         let svg = String::from_utf8(body).unwrap();
         assert!(svg.contains("aria-label=\"÷\""));
-        assert!(svg.contains("<feTurbulence"));
+        assert!(!svg.contains("<feTurbulence"));
     }
 
     #[tokio::test]
     async fn options() {
-        let (_, s) = text("/shape/divide.svg?grain=0&label=expenses&theme=dark").await;
-        assert!(!s.contains("<feTurbulence"));
+        let (_, s) = text("/shape/divide.svg?grain=1&label=expenses&theme=dark").await;
+        assert!(s.contains("<feTurbulence"));
         assert!(s.contains("<title>expenses</title>"));
         assert!(s.contains("#2c2450"));
         let (_, s) = text("/shape/ring.svg?theme=auto&crop=tile").await;

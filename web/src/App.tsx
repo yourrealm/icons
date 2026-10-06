@@ -11,7 +11,7 @@ export function App() {
   const [set, setSet] = useState<SetId>("char");
   const [name, setName] = useState("÷");
   const [search, setSearch] = useState("");
-  const [grain, setGrain] = useState(1);
+  const [grain, setGrain] = useState(0);
   const [label, setLabel] = useState("");
 
   useEffect(() => {
@@ -138,7 +138,7 @@ type ResultProps = {
 };
 
 function Result({ set, name, grain, setGrain, label, setLabel }: ResultProps) {
-  const q = { grain: grain === 1 ? undefined : grain, label: label || undefined };
+  const q = { grain: grain || undefined, label: label || undefined };
   const files = renditions(set, name, grain, label);
   return (
     <section className="result">

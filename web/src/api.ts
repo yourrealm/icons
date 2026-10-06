@@ -39,7 +39,7 @@ export function markPath(
 
 /// The files an app ships, in the order the other Realm apps keep them.
 export function renditions(set: SetId, name: string, grain: number, label: string) {
-  const g = grain === 1 ? undefined : grain;
+  const g = grain || undefined;
   const l = label || undefined;
   return [
     { file: "logo.svg", path: markPath(set, name, "svg", { grain: g, label: l }) },

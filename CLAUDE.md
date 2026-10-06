@@ -24,12 +24,15 @@ Built 2026-09-20. The README has the URL scheme and commands; this file has the 
 3. **Fitting:** icons and characters are scaled so their ink box's longer side is 184 units on the
    320-unit tile, centred. Shapes are placed as drawn, so they match what expenses and loans ship.
    Ink boxes come from usvg for icons and from ttf-parser for characters.
-4. **Grain is heavy by default** (`grain=1`): fractal noise at frequency 0.8, three octaves,
-   contrast stretched 4x around mid-grey, overlaid on the clay and clipped to the shape; the glyph
-   gets 0.8 of the tile's amount. The stretch matters: raw fractal noise sits near 0.5 and overlay
-   with mid-grey is a no-op, so browsers showed almost nothing until it was added (tuned in Chromium
-   2026-09-20; resvg alone looks heavier than browsers do). PNGs at 64 px and below and every ICO
-   drop it, since it is only noise there. `grain=0` gives the original marks.
+4. **Grain is off by default** (`grain=0`; it was `1` until 2026-10-06). At `grain=1` it is fractal
+   noise at frequency 0.8, three octaves, contrast stretched 4x around mid-grey, overlaid on the
+   clay and clipped to the shape; the glyph gets 0.8 of the tile's amount. The stretch matters: raw
+   fractal noise sits near 0.5 and overlay with mid-grey is a no-op, so browsers showed almost
+   nothing until it was added (tuned in Chromium 2026-09-20; resvg alone looks heavier than browsers
+   do). PNGs at 64 px and below and every ICO drop it, since it is only noise there. The noise
+   frequency is in the mark's own units, so it shrinks with the render: at launcher size (~80 px) it
+   is finer than a pixel and aliased to dark speckle, which is why the default went to 0. It is for
+   marks shown large; a grain that holds its pixel size would need the frequency set per render.
 5. **Pure Rust rendering.** resvg for PNG, the `ico` crate for favicons, ttf-parser for outlines. No
    librsvg, no ImageMagick, no fonts on the system: the font and both icon sets are embedded with
    rust-embed.

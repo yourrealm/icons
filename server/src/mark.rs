@@ -41,7 +41,7 @@ pub enum Crop {
 pub struct Options {
     pub theme: Theme,
     pub crop: Crop,
-    /// 0 for none, 1 for the default heavy grain.
+    /// 0 for none (the default), 1 for the heaviest.
     pub grain: f64,
     pub label: String,
 }
