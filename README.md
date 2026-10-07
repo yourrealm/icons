@@ -13,7 +13,7 @@ GET /fa/piggy-bank.png?size=512      16 to 1024 px, default 512
 GET /fa/piggy-bank.ico               16, 32 and 48 px frames, tile crop, no grain
 
 ?theme=light|dark|auto      default light; auto is both marks in one SVG, picked by prefers-color-scheme
-?crop=full|tile             default full (the 400-unit mark with its shadow); tile fills the frame, for icons
+?crop=full|tile             default full (the 400-unit mark with its shadow); tile fills the frame with the tile alone, no drop shadow, for icons
 ?grain=0..1                 default 0, none; see Grain below. PNGs at or below 64 px and ICO drop it
 ?label=text                 the SVG's title and aria-label, default the glyph's name
 

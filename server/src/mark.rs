@@ -34,7 +34,8 @@ pub enum Theme {
 pub enum Crop {
     /// The 400-unit mark space, shadow margin included.
     Full,
-    /// The tile fills the frame, for icon sizes.
+    /// The tile fills the frame, for icon sizes. No drop shadow: the frame
+    /// would cut it off.
     Tile,
 }
 
@@ -117,6 +118,8 @@ struct Clay<'a> {
     drop_op: f64,
     /// Grain amount, 0 for none.
     grain: f64,
+    /// Draw the drop shadow. The rims and the specular edge are drawn either way.
+    drop: bool,
 }
 
 /// Drop shadow, a light inner rim top-left, a dark inner rim bottom-right, a
@@ -128,14 +131,28 @@ fn clay(c: &Clay) -> String {
     let blur = (d as f64 * 1.5).round();
     let dy = (d as f64 * 1.75).round();
     let mut f = String::new();
-    write!(
+    writeln!(
         f,
-        r##"<filter id="{}" x="-45%" y="-45%" width="190%" height="190%" color-interpolation-filters="sRGB">
-<feGaussianBlur in="SourceAlpha" stdDeviation="{blur}" result="dropBlur"/>
+        r##"<filter id="{}" x="-45%" y="-45%" width="190%" height="190%" color-interpolation-filters="sRGB">"##,
+        c.id
+    )
+    .unwrap();
+    if c.drop {
+        write!(
+            f,
+            r##"<feGaussianBlur in="SourceAlpha" stdDeviation="{blur}" result="dropBlur"/>
 <feOffset in="dropBlur" dx="{d}" dy="{dy}" result="dropOff"/>
 <feFlood flood-color="{shadow}" flood-opacity="{}" result="dropColor"/>
 <feComposite in="dropColor" in2="dropOff" operator="in" result="drop"/>
-<feOffset in="SourceAlpha" dx="{d}" dy="{d}" result="oL"/>
+"##,
+            c.drop_op,
+            shadow = c.shadow,
+        )
+        .unwrap();
+    }
+    write!(
+        f,
+        r##"<feOffset in="SourceAlpha" dx="{d}" dy="{d}" result="oL"/>
 <feGaussianBlur in="oL" stdDeviation="{d}" result="bL"/>
 <feComposite in="SourceAlpha" in2="bL" operator="out" result="rimL"/>
 <feFlood flood-color="#ffffff" flood-opacity="{}" result="fL"/>
@@ -150,12 +167,11 @@ fn clay(c: &Clay) -> String {
 <feComposite in="SourceAlpha" in2="bS" operator="out" result="rimS"/>
 <feFlood flood-color="#ffffff" flood-opacity="0.9" result="fS"/>
 <feComposite in="fS" in2="rimS" operator="in" result="spec"/>
-<feMerge result="clay"><feMergeNode in="drop"/><feMergeNode in="SourceGraphic"/><feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="spec"/></feMerge>
+<feMerge result="clay">{}<feMergeNode in="SourceGraphic"/><feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="spec"/></feMerge>
 "##,
-        c.id,
-        c.drop_op,
         c.light_op,
         c.dark_op,
+        if c.drop { r#"<feMergeNode in="drop"/>"# } else { "" },
         shadow = c.shadow,
     )
     .unwrap();
@@ -191,7 +207,7 @@ struct Parts {
 }
 
 /// `p` prefixes the ids so two marks can share one document.
-fn parts(m: &Mode, g: &Glyph, grain: f64, p: &str) -> Parts {
+fn parts(m: &Mode, g: &Glyph, grain: f64, drop: bool, p: &str) -> Parts {
     let tile_top = if m.dark {
         mix(m.tile, "#ffffff", 0.18)
     } else {
@@ -206,6 +222,7 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, p: &str) -> Parts {
             dark_op: 0.6,
             drop_op: 0.45,
             grain,
+            drop,
         }
     } else {
         Clay {
@@ -216,6 +233,7 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, p: &str) -> Parts {
             dark_op: 0.45,
             drop_op: 0.28,
             grain,
+            drop,
         }
     };
     let sign_clay = Clay {
@@ -226,6 +244,7 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, p: &str) -> Parts {
         dark_op: 0.45,
         drop_op: 0.3,
         grain: grain * 0.8,
+        drop: true,
     };
     let defs = grad(&format!("{p}gTile"), &tile_top, m.tile)
         + &grad(&format!("{p}gSign"), &tint(m.mark), m.mark)
@@ -264,6 +283,8 @@ pub fn svg(g: &Glyph, o: &Options) -> String {
         Crop::Tile => TILE_BOX,
     };
     let label = escape(&o.label);
+    // The tile crop has no room for the tile's drop shadow.
+    let drop = o.crop != Crop::Tile;
     let mut out = format!(
         "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"{view}\" role=\"img\" aria-label=\"{label}\">\n<title>{label}</title>\n"
     );
@@ -273,8 +294,8 @@ pub fn svg(g: &Glyph, o: &Options) -> String {
     }
     match o.theme {
         Theme::Auto => {
-            let l = parts(&LIGHT, g, o.grain, "l");
-            let d = parts(&DARK, g, o.grain, "d");
+            let l = parts(&LIGHT, g, o.grain, drop, "l");
+            let d = parts(&DARK, g, o.grain, drop, "d");
             out.push_str("<style>.dark{display:none}@media (prefers-color-scheme:dark){.light{display:none}.dark{display:inline}}</style>\n");
             out.push_str(&format!(
                 "<defs>{}{}</defs>\n<g class=\"light\">{}{}</g>\n<g class=\"dark\">{}{}</g>\n",
@@ -283,7 +304,7 @@ pub fn svg(g: &Glyph, o: &Options) -> String {
         }
         theme => {
             let m = if theme == Theme::Dark { &DARK } else { &LIGHT };
-            let p = parts(m, g, o.grain, "");
+            let p = parts(m, g, o.grain, drop, "");
             out.push_str(&format!(
                 "<defs>{}</defs>\n<g>{}{}</g>\n",
                 p.defs, p.tile, p.glyph
@@ -345,6 +366,39 @@ mod tests {
         assert!(!without.contains("<feTurbulence"));
         // Fitted: 10 units become 184.
         assert!(with.contains("scale(18.4000)"));
+    }
+
+    #[test]
+    fn tile_crop_has_no_tile_drop_shadow() {
+        let g = Glyph {
+            body: "<path d=\"M0 0h10v10H0z\"/>".into(),
+            x: 0.0,
+            y: 0.0,
+            w: 10.0,
+            h: 10.0,
+            placed: false,
+            notice: None,
+        };
+        let opts = |crop| Options {
+            theme: Theme::Light,
+            crop,
+            grain: 0.0,
+            label: "x".into(),
+        };
+        // The tile's filter and the glyph's each carry one drop under Full;
+        // under Tile only the glyph's is left.
+        assert_eq!(
+            svg(&g, &opts(Crop::Full))
+                .matches("result=\"dropBlur\"")
+                .count(),
+            2
+        );
+        assert_eq!(
+            svg(&g, &opts(Crop::Tile))
+                .matches("result=\"dropBlur\"")
+                .count(),
+            1
+        );
     }
 
     #[test]
