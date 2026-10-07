@@ -116,6 +116,8 @@ struct Clay<'a> {
     light_op: f64,
     dark_op: f64,
     drop_op: f64,
+    /// The thin white specular edge.
+    spec_op: f64,
     /// Grain amount, 0 for none.
     grain: f64,
     /// Draw the drop shadow. The rims and the specular edge are drawn either way.
@@ -165,7 +167,7 @@ fn clay(c: &Clay) -> String {
 <feOffset in="SourceAlpha" dx="2" dy="2" result="oS"/>
 <feGaussianBlur in="oS" stdDeviation="1.2" result="bS"/>
 <feComposite in="SourceAlpha" in2="bS" operator="out" result="rimS"/>
-<feFlood flood-color="#ffffff" flood-opacity="0.9" result="fS"/>
+<feFlood flood-color="#ffffff" flood-opacity="{spec}" result="fS"/>
 <feComposite in="fS" in2="rimS" operator="in" result="spec"/>
 <feMerge result="clay">{}<feMergeNode in="SourceGraphic"/><feMergeNode in="light"/><feMergeNode in="dark"/><feMergeNode in="spec"/></feMerge>
 "##,
@@ -173,6 +175,7 @@ fn clay(c: &Clay) -> String {
         c.dark_op,
         if c.drop { r#"<feMergeNode in="drop"/>"# } else { "" },
         shadow = c.shadow,
+        spec = c.spec_op,
     )
     .unwrap();
     if c.grain > 0.0 {
@@ -221,6 +224,8 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, drop: bool, p: &str) -> Parts {
             light_op: 0.35,
             dark_op: 0.6,
             drop_op: 0.45,
+            // Lower than light's: at 0.9 it rings the tile against a dark page.
+            spec_op: 0.25,
             grain,
             drop,
         }
@@ -232,6 +237,7 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, drop: bool, p: &str) -> Parts {
             light_op: 0.85,
             dark_op: 0.45,
             drop_op: 0.28,
+            spec_op: 0.9,
             grain,
             drop,
         }
@@ -243,6 +249,7 @@ fn parts(m: &Mode, g: &Glyph, grain: f64, drop: bool, p: &str) -> Parts {
         light_op: 0.85,
         dark_op: 0.45,
         drop_op: 0.3,
+        spec_op: 0.9,
         grain: grain * 0.8,
         drop: true,
     };
