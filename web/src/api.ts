@@ -38,20 +38,16 @@ export function markPath(
 }
 
 /// The files an app ships, in the order the other Realm apps keep them.
-export function renditions(set: SetId, name: string, grain: number, label: string) {
+export function renditions(set: SetId, name: string, grain: number) {
   const g = grain || undefined;
-  const l = label || undefined;
   return [
-    { file: "logo.svg", path: markPath(set, name, "svg", { grain: g, label: l }) },
-    {
-      file: "logo-dark.svg",
-      path: markPath(set, name, "svg", { theme: "dark", grain: g, label: l }),
-    },
+    { file: "logo.svg", path: markPath(set, name, "svg", { grain: g }) },
+    { file: "logo-dark.svg", path: markPath(set, name, "svg", { theme: "dark", grain: g }) },
     {
       file: "favicon.svg",
-      path: markPath(set, name, "svg", { theme: "auto", crop: "tile", grain: g, label: l }),
+      path: markPath(set, name, "svg", { theme: "auto", crop: "tile", grain: g }),
     },
-    { file: "favicon.ico", path: markPath(set, name, "ico", { label: l }) },
-    { file: "icon-512.png", path: markPath(set, name, "png", { size: 512, grain: g, label: l }) },
+    { file: "favicon.ico", path: markPath(set, name, "ico") },
+    { file: "icon-512.png", path: markPath(set, name, "png", { size: 512, grain: g }) },
   ];
 }

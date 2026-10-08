@@ -43,7 +43,8 @@ https://icons.yourrealm.eu/fa/piggy-bank.png?size=1024&grain=1
 
 The web UI at `/` picks a source and a glyph, previews both themes, and gives the five files an app
 ships (`logo.svg`, `logo-dark.svg`, `favicon.svg`, `favicon.ico`, `icon-512.png`) as downloads and
-as URLs to copy.
+as URLs to copy. For a Phosphor icon or a shape it leads with how the app looks on Realm Home and the
+`icon: "ph:<name>"` line for `realm.tsx`.
 
 ## Run
 

@@ -214,7 +214,92 @@ input:not([type]),
   padding: 4px 10px;
   font-size: 13px;
 }
+.home {
+  margin-bottom: 24px;
+}
+.home h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+/* Home's own tokens (holden packages/sdk/src/ui/tokens.css), so the tiles
+   sit on the background and card they will have there. */
+.home-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.home-panel {
+  --h-bg: #f0edff;
+  --h-card: #ffffff;
+  --h-card-to: #e8e4ff;
+  --h-fg: #2d2456;
+  --h-muted: #6b5fa8;
+  --h-shadow:
+    8px 12px 24px 0 rgba(100, 80, 180, 0.2), inset -4px -4px 10px 0 rgba(100, 80, 180, 0.1),
+    inset 3px 5px 14px 0 rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--h-bg);
+  color: var(--h-fg);
+}
+.home-panel.dark {
+  --h-bg: #1a1433;
+  --h-card: #241e45;
+  --h-card-to: #2d2456;
+  --h-fg: #e8e4ff;
+  --h-muted: #9b8fd4;
+  --h-shadow:
+    8px 12px 24px 0 rgba(10, 5, 30, 0.45), inset -4px -4px 10px 0 rgba(10, 5, 30, 0.35),
+    inset 3px 5px 14px 0 rgba(255, 255, 255, 0.06);
+}
+.home-launcher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 80px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.home-launcher span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-card {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(to bottom right, var(--h-card), var(--h-card-to));
+  box-shadow: var(--h-shadow);
+}
+.home-card span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-card b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+.home-card small {
+  color: var(--h-muted);
+  font-size: 13px;
+}
 @media (max-width: 640px) {
+  .home-panels,
   .previews,
   .controls {
     grid-template-columns: 1fr;

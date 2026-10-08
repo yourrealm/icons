@@ -12,7 +12,6 @@ export function App() {
   const [name, setName] = useState("÷");
   const [search, setSearch] = useState("");
   const [grain, setGrain] = useState(0);
-  const [label, setLabel] = useState("");
 
   useEffect(() => {
     fetchSets().then(setSets, (e: Error) => setError(e.message));
@@ -114,16 +113,7 @@ export function App() {
           )}
       </section>
 
-      {name && (
-        <Result
-          set={set}
-          name={name}
-          grain={grain}
-          setGrain={setGrain}
-          label={label}
-          setLabel={setLabel}
-        />
-      )}
+      {name && <Result set={set} name={name} grain={grain} setGrain={setGrain} />}
     </main>
   );
 }
@@ -133,15 +123,15 @@ type ResultProps = {
   name: string;
   grain: number;
   setGrain: (g: number) => void;
-  label: string;
-  setLabel: (l: string) => void;
 };
 
-function Result({ set, name, grain, setGrain, label, setLabel }: ResultProps) {
-  const q = { grain: grain || undefined, label: label || undefined };
-  const files = renditions(set, name, grain, label);
+function Result({ set, name, grain, setGrain }: ResultProps) {
+  const q = { grain: grain || undefined };
+  const files = renditions(set, name, grain);
   return (
     <section className="result">
+      {(set === "ph" || set === "shape") && <OnHome set={set} name={name} />}
+
       <div className="previews">
         <figure className="light">
           <img src={markPath(set, name, "svg", q)} alt={`${name}, light`} />
@@ -165,15 +155,6 @@ function Result({ set, name, grain, setGrain, label, setLabel }: ResultProps) {
             onChange={(e) => setGrain(Number(e.target.value))}
           />
         </label>
-        <label>
-          Label
-          <input
-            value={label}
-            placeholder={name}
-            maxLength={64}
-            onChange={(e) => setLabel(e.target.value)}
-          />
-        </label>
       </div>
 
       <table className="files">
@@ -185,14 +166,65 @@ function Result({ set, name, grain, setGrain, label, setLabel }: ResultProps) {
   );
 }
 
-function FileRow({ file, path }: { file: string; path: string }) {
+/// Home draws `ph:` and `shape:` icons itself, from the same mark, so an app
+/// names one in realm.tsx instead of linking here. Home's renderer has no
+/// grain, so this preview ignores it.
+function OnHome({ set, name }: { set: "ph" | "shape"; name: string }) {
+  const snippet = `icon: "${set}:${name}",`;
+  const [copied, copy] = useCopy(snippet);
+  return (
+    <div className="home">
+      <h2>On Realm Home</h2>
+      <div className="home-panels">
+        {(["light", "dark"] as const).map((theme) => {
+          const src = markPath(set, name, "svg", { crop: "tile", theme });
+          return (
+            <div key={theme} className={`home-panel ${theme}`}>
+              <div className="home-launcher">
+                <img src={src} alt="" width={80} height={80} />
+                <span>{name}</span>
+              </div>
+              <div className="home-card">
+                <img src={src} alt="" width={52} height={52} />
+                <span>
+                  <b>{name}</b>
+                  <small>All workers</small>
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <table className="files">
+        <tbody>
+          <tr>
+            <th>realm.tsx</th>
+            <td>
+              <code>{snippet}</code>
+            </td>
+            <td className="actions">
+              <button onClick={copy}>{copied ? "Copied" : "Copy"}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function useCopy(text: string): [boolean, () => Promise<void>] {
   const [copied, setCopied] = useState(false);
-  const url = `${location.origin}${path}`;
   const copy = async () => {
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
   };
+  return [copied, copy];
+}
+
+function FileRow({ file, path }: { file: string; path: string }) {
+  const url = `${location.origin}${path}`;
+  const [copied, copy] = useCopy(url);
   return (
     <tr>
       <th>{file}</th>

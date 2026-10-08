@@ -41,9 +41,11 @@ Built 2026-09-20. The README has the URL scheme and commands; this file has the 
 7. **Attribution travels.** Font Awesome's icons are CC BY 4.0. Their comment is lifted out of the
    icon file and written once at the top of every SVG made from it. Phosphor is MIT, Nunito is OFL;
    all three license files sit next to the assets.
-8. **The UI downloads, `realm.tsx` hotlinks.** Apps copy the five files into their `web/public`; a
-   favicon must not depend on this service being up. Only a deployment description should point at a
-   URL here.
+8. **The UI downloads, `realm.tsx` names.** Apps copy the five files into their `web/public`; a
+   favicon must not depend on this service being up. A `ph:` or `shape:` icon goes in `realm.tsx` as
+   `icon: "ph:<name>"`, which Home draws itself with the SDK's port of `mark.rs`, so the UI shows that
+   line and a Home preview first. Only a `char` or `fa` icon in `realm.tsx` still points at a URL
+   here.
 
 ## Layout
 
